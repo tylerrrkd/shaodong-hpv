@@ -1,13 +1,11 @@
 import axios from "axios";
 import { isAfter } from "date-fns";
 
-const queue = async ({
-  params,
-  cookie,
-}: {
+interface IQueueProps {
   params: URLSearchParams;
   cookie: string;
-}): Promise<boolean> => {
+}
+const queue = async ({ params, cookie }: IQueueProps): Promise<boolean> => {
   try {
     const res = await axios({
       withCredentials: true,
