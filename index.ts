@@ -46,7 +46,7 @@ const endDate = new Date("2022-04-08 09:20:00");
 
 if (queryString && cookie) {
   const params = new URLSearchParams(queryString);
-  const timer = globalThis.setInterval(() => {
+  const timer: NodeJS.Timer = globalThis.setInterval(() => {
     if (isAfter(new Date(), endDate)) {
       console.log("Activity ended");
       return timer && clearInterval(timer);
