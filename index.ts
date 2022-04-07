@@ -40,7 +40,7 @@ const queue = async ({
 const commandArgument = process?.argv?.slice?.(2) || [];
 const [queryString, cookie] = commandArgument;
 
-if (queryString) {
+if (queryString && cookie) {
   const params = new URLSearchParams(queryString);
   globalThis.setInterval(() => {
     queue({ params, cookie });
