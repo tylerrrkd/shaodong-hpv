@@ -7,7 +7,7 @@ const queue = async ({
 }: {
   params: URLSearchParams;
   cookie: string;
-}) => {
+}): Promise<boolean> => {
   try {
     const res = await axios({
       withCredentials: true,
@@ -31,10 +31,16 @@ const queue = async ({
       },
     });
     console.log(res.data);
+    if (res?.data?.Code === 200) {
+      return true;
+    } else {
+      return false;
+    }
   } catch (error) {
     if (error instanceof Error) {
       console.log(error);
     }
+    return false;
   }
 };
 
@@ -46,13 +52,17 @@ const endDate = new Date("2022-04-08 09:20:00");
 
 if (queryString && cookie) {
   const params = new URLSearchParams(queryString);
-  const timer: NodeJS.Timer = globalThis.setInterval(() => {
+  const timer: NodeJS.Timer = globalThis.setInterval(async () => {
     if (isAfter(new Date(), endDate)) {
       console.log("Activity ended");
       return timer && clearInterval(timer);
     }
     if (isAfter(new Date(), startDate)) {
-      queue({ params, cookie });
+      const weMadeIt = await queue({ params, cookie });
+      if (weMadeIt) {
+        console.log("We made it!!!!!!!");
+        timer && clearInterval(timer);
+      }
     } else {
       console.log("Activity not start yet");
     }
