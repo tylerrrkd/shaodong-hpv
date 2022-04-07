@@ -58,6 +58,7 @@ if (queryString && cookie) {
       return timer && clearInterval(timer);
     }
     if (isAfter(new Date(), startDate)) {
+      // release resources
       const weMadeIt = await queue({ params, cookie });
       if (weMadeIt) {
         console.log("We made it!!!!!!!");
