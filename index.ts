@@ -1,4 +1,5 @@
 import axios from "axios";
+import { isAfter } from "date-fns";
 
 const queue = async ({
   params,
@@ -40,11 +41,22 @@ const queue = async ({
 const commandArgument = process?.argv?.slice?.(2) || [];
 const [queryString, cookie] = commandArgument;
 
+const startDate = new Date("2022-04-08 08:52:00");
+const endDate = new Date("2022-04-08 09:20:00");
+
 if (queryString && cookie) {
   const params = new URLSearchParams(queryString);
-  globalThis.setInterval(() => {
-    queue({ params, cookie });
-  }, 1000);
+  const timer = globalThis.setInterval(() => {
+    if (isAfter(new Date(), endDate)) {
+      console.log("Activity ended");
+      return timer && clearInterval(timer);
+    }
+    if (isAfter(new Date(), startDate)) {
+      queue({ params, cookie });
+    } else {
+      console.log("Activity not start yet");
+    }
+  }, 200);
 } else {
   console.warn("Missing arguments");
 }
