@@ -1,5 +1,5 @@
 import axios from "axios";
-import { isAfter } from "date-fns";
+import { isAfter, format } from "date-fns";
 
 interface IQueueProps {
   params: URLSearchParams;
@@ -48,22 +48,24 @@ const [queryString, cookie] = commandArgument;
 const startDate = new Date("2022-04-08 08:52:00");
 const endDate = new Date("2022-04-08 09:20:00");
 
+const getLogTimeString = () => format(new Date(), "yyyy-MM-dd HH:mm:ss");
+
 if (queryString && cookie) {
   const params = new URLSearchParams(queryString);
   const timer: NodeJS.Timer = globalThis.setInterval(async () => {
     if (isAfter(new Date(), endDate)) {
-      console.log("Activity ended");
+      console.log(`Activity ended(${getLogTimeString()})`);
       return timer && clearInterval(timer);
     }
     if (isAfter(new Date(), startDate)) {
       // release resources
       const weMadeIt = await queue({ params, cookie });
       if (weMadeIt) {
-        console.log("We made it!!!!!!!");
+        console.log(`We made it!!!!!!!(${getLogTimeString()})`);
         timer && clearInterval(timer);
       }
     } else {
-      console.log("Activity not start yet");
+      console.log(`Activity not start yet(${getLogTimeString()})`);
     }
   }, 200);
 } else {
