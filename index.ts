@@ -60,7 +60,7 @@ const queue = async ({ params, cookie }: IQueueProps): Promise<boolean> => {
   }
 };
 
-const getCode = async ({ cookie }): Promise<boolean> => {
+const getCode = async ({ cookie }: { cookie: string }): Promise<string> => {
   try {
     const res = await axios({
       withCredentials: true,
@@ -71,39 +71,43 @@ const getCode = async ({ cookie }): Promise<boolean> => {
       },
       headers: getHeaders(cookie),
     });
-    console.log(res);
+    console.log(res.data);
+    return "";
   } catch (error) {
     if (error instanceof Error) {
       console.log(error);
     }
-    return false;
+    return "";
   }
 };
 
 const commandArgument = process?.argv?.slice?.(2) || [];
 const [queryString, cookie] = commandArgument;
 
-const startDate = new Date("2022-04-29 08:59:58");
+const startDate = new Date("2022-04-29 08:59:57");
 const endDate = new Date("2022-04-29 09:10:00");
 
 const getLogTimeString = () => format(new Date(), "yyyy-MM-dd HH:mm:ss");
+const log = (msg: string) => console.log(`${msg}(${getLogTimeString()})`);
 
 if (queryString && cookie) {
-  const params = new URLSearchParams(queryString);
   const timer: NodeJS.Timer = globalThis.setInterval(async () => {
     if (isAfter(new Date(), endDate)) {
-      console.log(`Activity ended(${getLogTimeString()})`);
+      log(`Activity ended`);
       return timer && clearInterval(timer);
     }
     if (isAfter(new Date(), startDate)) {
       // release resources
+      const params = new URLSearchParams(`${queryString}`);
       const weMadeIt = await queue({ params, cookie });
       if (weMadeIt) {
-        console.log(`We made it!!!!!!!(${getLogTimeString()})`);
+        log(`We made it!!!!!!!`);
         timer && clearInterval(timer);
+      } else {
+        log(`Don't worry, try again`);
       }
     } else {
-      console.log(`Activity not start yet(${getLogTimeString()})`);
+      log(`Activity not start yet`);
     }
   }, 666);
 } else {
